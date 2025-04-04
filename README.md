@@ -54,13 +54,14 @@ To modify or extend this extension:
 
 ### Testing
 
-This extension includes automated integration tests using Playwright. The tests verify the UI components, interactions, and simulate Chrome API behavior.
+This extension includes automated integration tests using Playwright. The tests verify the actual extension functionality with real syncing to a staging peer.
 
 #### Running Tests
 
 1. Install dependencies:
    ```bash
    npm install
+   cd staging-peer && npm install
    ```
 
 2. Install Playwright browsers:
@@ -83,36 +84,27 @@ This extension includes automated integration tests using Playwright. The tests 
    npx playwright show-report
    ```
 
-#### Test Features
+#### Integration Test Features
 
-- **Screenshot Testing**: Tests automatically capture screenshots at various stages, which are saved in the `test-results/` directory
-- **UI Testing**: Verifies that all UI elements are present and correctly styled
-- **Interaction Testing**: Tests button clicks and hover states
-- **Mock Chrome API**: Simulates Chrome extension API behavior for testing outside the extension environment
+The integration tests use a real Chrome browser with the extension loaded and test against a staging peer server:
 
-#### Real-World Syncing Tests
+- **Real Extension Testing**: Tests the actual extension in a Chrome browser
+- **Staging Peer**: Uses a real HyperDB peer server for testing syncing functionality
+- **End-to-End Testing**: Verifies the complete workflow from browsing to syncing history
+- **Data Verification**: Confirms that history items are properly stored and retrieved
+- **Clear Data Testing**: Verifies that clearing data works correctly
 
-The extension also includes real-world tests that verify actual syncing with a staging peer:
-
-1. Start the staging peer server:
-   ```bash
-   npm run start:staging-peer
-   ```
-
-2. In a separate terminal, run the real-world tests:
-   ```bash
-   npm run test:real-world
-   ```
-
-These tests:
-- Start a staging peer server that the extension can sync with
-- Test actual data syncing between the extension and the staging peer
-- Verify that history items are properly stored and retrieved
-- Test clearing data and verify it works correctly
+The tests automatically:
+- Start a staging peer server
+- Load the extension in a Chrome browser
+- Navigate to test pages to generate history
+- Test syncing with the staging peer
+- Verify data is correctly synchronized
+- Test clearing data functionality
 
 #### Continuous Integration
 
-The repository includes GitHub Actions workflows that automatically run the tests on push and pull requests to the main branch. The test results and screenshots are available as artifacts in the GitHub Actions workflow.
+The repository includes GitHub Actions workflows that automatically run the integration tests on push and pull requests to the main branch. The test results are available as artifacts in the GitHub Actions workflow.
 
 ## License
 

@@ -1,4 +1,4 @@
-name: Playwright Tests
+name: Extension Integration Tests
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 
 jobs:
   test:
-    name: 'Playwright Tests'
+    name: 'Chrome Extension Tests'
     runs-on: ubuntu-latest
     
     steps:
@@ -23,10 +23,13 @@ jobs:
       - name: Install dependencies
         run: npm ci
       
+      - name: Install staging peer dependencies
+        run: cd staging-peer && npm ci
+      
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
       
-      - name: Run Playwright tests
+      - name: Run extension tests
         run: npx playwright test
       
       - name: Upload test report
@@ -43,51 +46,4 @@ jobs:
         with:
           name: test-results
           path: test-results/
-          retention-days: 30
-          
-      - name: Upload screenshots
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: screenshots
-          path: screenshots/
-          retention-days: 30
-          
-      - name: Generate screenshot summary
-        if: always()
-        run: |
-          echo "# Test Screenshots" > screenshot-summary.md
-          echo "" >> screenshot-summary.md
-          echo "## UI Tests" >> screenshot-summary.md
-          echo "" >> screenshot-summary.md
-          for i in {1..13}; do
-            padded=$(printf "%02d" $i)
-            files=$(find screenshots -name "$padded-*.png" | sort)
-            for file in $files; do
-              filename=$(basename "$file")
-              echo "### $filename" >> screenshot-summary.md
-              echo "![Screenshot]($file)" >> screenshot-summary.md
-              echo "" >> screenshot-summary.md
-            done
-          done
-          
-          echo "## Mock Chrome API Tests" >> screenshot-summary.md
-          echo "" >> screenshot-summary.md
-          for i in {14..26}; do
-            padded=$(printf "%02d" $i)
-            files=$(find screenshots -name "$padded-*.png" | sort)
-            for file in $files; do
-              filename=$(basename "$file")
-              echo "### $filename" >> screenshot-summary.md
-              echo "![Screenshot]($file)" >> screenshot-summary.md
-              echo "" >> screenshot-summary.md
-            done
-          done
-      
-      - name: Upload screenshot summary
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: screenshot-summary
-          path: screenshot-summary.md
           retention-days: 30

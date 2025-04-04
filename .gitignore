@@ -18,3 +18,9 @@ build/
 *.swp
 *.swo
 .DS_Store
+
+# Test files
+test-results/
+playwright-report/
+screenshots/
+**/staging-peer/data/
