@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>HyperDB History Sync Test Page</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    h1 {
+      color: #007bff;
+    }
+    .card {
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+    pre {
+      background-color: #f8f9fa;
+      padding: 10px;
+      border-radius: 5px;
+      overflow-x: auto;
+    }
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0069d9;
+    }
+  </style>
+</head>
+<body>
+  <h1>HyperDB History Sync Test Page</h1>
+  
+  <div class="card">
+    <h2>Extension Test</h2>
+    <p>This page is for testing the HyperDB History Sync Chrome extension. If the extension is working correctly, this page visit should be recorded in your HyperDB database.</p>
+    
+    <h3>Test Actions</h3>
+    <button id="generateHistory">Generate Test History</button>
+    <div id="testResults"></div>
+  </div>
+  
+  <div class="card">
+    <h2>Extension Information</h2>
+    <p>The HyperDB History Sync extension uses the following technologies:</p>
+    <ul>
+      <li><strong>Hypercore</strong>: A secure append-only log</li>
+      <li><strong>Hyperbee</strong>: A key-value database built on Hypercore</li>
+      <li><strong>Hyperswarm</strong>: A peer discovery system for P2P networking</li>
+    </ul>
+  </div>
+  
+  <script>
+    document.getElementById('generateHistory').addEventListener('click', function() {
+      const results = document.getElementById('testResults');
+      results.innerHTML = '<p>Generating test history entries...</p>';
+      
+      // Create an array of test URLs
+      const testUrls = [
+        'https://example.com/page1',
+        'https://example.com/page2',
+        'https://example.com/page3',
+        'https://example.com/page4',
+        'https://example.com/page5'
+      ];
+      
+      // Open each URL in a new tab
+      testUrls.forEach(url => {
+        window.open(url, '_blank');
+      });
+      
+      results.innerHTML += '<p>Test history entries generated! Check the extension popup to see if they were recorded.</p>';
+    });
+  </script>
+</body>
+</html>

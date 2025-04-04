@@ -1,0 +1,15 @@
+{
+  "name": "hyperdb-history-sync",
+  "version": "1.0.0",
+  "description": "Chrome extension that stores browsing history in HyperDB for P2P sharing",
+  "main": "background.js",
+  "scripts": {
+    "build": "echo 'No build step required'"
+  },
+  "dependencies": {
+    "hypercore": "^10.0.0",
+    "hyperbee": "^2.0.0",
+    "hyperswarm": "^4.0.0",
+    "random-access-memory": "^6.0.0"
+  }
+}
