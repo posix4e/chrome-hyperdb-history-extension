@@ -4,12 +4,19 @@
   "description": "Chrome extension that stores browsing history in HyperDB for P2P sharing",
   "main": "background.js",
   "scripts": {
-    "build": "echo 'No build step required'"
+    "build": "echo 'No build step required'",
+    "test": "playwright test",
+    "test:debug": "playwright test --debug"
   },
   "dependencies": {
     "hypercore": "^10.0.0",
     "hyperbee": "^2.0.0",
     "hyperswarm": "^4.0.0",
     "random-access-memory": "^6.0.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.40.0",
+    "playwright": "^1.40.0",
+    "playwright-core": "^1.40.0"
   }
 }
