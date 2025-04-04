@@ -22,6 +22,8 @@ module.exports = defineConfig({
     actionTimeout: 0,
     trace: 'on-first-retry',
     screenshot: 'on',
+    // Take screenshot on test failure
+    video: 'on-first-retry',
   },
   projects: [
     {
@@ -30,4 +32,6 @@ module.exports = defineConfig({
     },
   ],
   outputDir: 'test-results/',
+  // Save screenshots to a dedicated directory
+  preserveOutput: 'always',
 });
