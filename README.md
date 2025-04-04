@@ -90,6 +90,26 @@ This extension includes automated integration tests using Playwright. The tests 
 - **Interaction Testing**: Tests button clicks and hover states
 - **Mock Chrome API**: Simulates Chrome extension API behavior for testing outside the extension environment
 
+#### Real-World Syncing Tests
+
+The extension also includes real-world tests that verify actual syncing with a staging peer:
+
+1. Start the staging peer server:
+   ```bash
+   npm run start:staging-peer
+   ```
+
+2. In a separate terminal, run the real-world tests:
+   ```bash
+   npm run test:real-world
+   ```
+
+These tests:
+- Start a staging peer server that the extension can sync with
+- Test actual data syncing between the extension and the staging peer
+- Verify that history items are properly stored and retrieved
+- Test clearing data and verify it works correctly
+
 #### Continuous Integration
 
 The repository includes GitHub Actions workflows that automatically run the tests on push and pull requests to the main branch. The test results and screenshots are available as artifacts in the GitHub Actions workflow.
