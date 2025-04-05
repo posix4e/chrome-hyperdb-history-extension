@@ -20,7 +20,7 @@ export default defineConfig({
   ],
   outputDir: 'test-results/',
   use: {
-    baseURL: 'http://localhost:3000',
+    baseURL: 'http://localhost:12000',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
   },
@@ -32,7 +32,7 @@ export default defineConfig({
   ],
   webServer: {
     command: 'node server.js',
-    port: 3000,
+    port: 12000,
     reuseExistingServer: !process.env.CI,
   },
 });

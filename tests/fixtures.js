@@ -10,13 +10,13 @@ const __dirname = path.dirname(__filename);
  */
 export const test = base.extend({
   // Define a fixture for a context with the extension loaded
-  context: async ({ _browser }, use) => {
+  context: async ({ browser }, use) => {
     // Get the absolute path to the extension
     const extensionPath = path.resolve(__dirname, '..');
     
     // Launch a browser with the extension loaded
     const context = await chromium.launchPersistentContext('', {
-      headless: false, // Extensions require a non-headless browser
+      headless: process.env.CI ? true : false, // Use headless mode in CI environment
       args: [
         `--disable-extensions-except=${extensionPath}`,
         `--load-extension=${extensionPath}`,
@@ -58,13 +58,13 @@ export const test = base.extend({
   },
   
   // Define a fixture for a second browser instance to test P2P functionality
-  secondContext: async ({ _browser }, use) => {
+  secondContext: async ({ browser }, use) => {
     // Get the absolute path to the extension
     const extensionPath = path.resolve(__dirname, '..');
     
     // Launch a second browser with the extension loaded
     const context = await chromium.launchPersistentContext('user-data-dir-2', {
-      headless: false,
+      headless: process.env.CI ? true : false, // Use headless mode in CI environment
       args: [
         `--disable-extensions-except=${extensionPath}`,
         `--load-extension=${extensionPath}`,

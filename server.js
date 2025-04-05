@@ -1,6 +1,10 @@
-const http = require('http');
-const fs = require('fs');
-const path = require('path');
+import http from 'http';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const PORT = 12000;
 
@@ -32,7 +36,7 @@ const server = http.createServer((req, res) => {
   }
   
   // Serve the test.html file for the root path
-  const filePath = req.url === '/' ? './test.html' : '.' + req.url;
+  const filePath = req.url === '/' ? path.join(__dirname, 'test.html') : path.join(__dirname, req.url);
   
   const extname = path.extname(filePath);
   const contentType = MIME_TYPES[extname] || 'text/plain';
