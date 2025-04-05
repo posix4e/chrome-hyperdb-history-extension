@@ -29,7 +29,7 @@ test.describe('Basic CI Tests', () => {
     // Take final screenshot
     await page.screenshot({ path: path.join(screenshotsDir, 'final-state.png') });
     
-    // Log success
-    console.log('CI test completed successfully with screenshots saved');
+    // Log success using test annotations instead of console.log
+    test.info().annotations.push({ type: 'info', description: 'CI test completed successfully with screenshots saved' });
   });
 });

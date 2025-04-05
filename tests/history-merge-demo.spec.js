@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
 import fs from 'fs';
 import path from 'path';
 import { test as extensionTest } from './fixtures.js';
@@ -51,7 +51,8 @@ mergeTest.describe('History Merging Demonstration', () => {
   
   mergeTest('should demonstrate history merging between two browsers', async ({ extensionPage, secondExtensionPage }) => {
     // Wait for the peers to discover each other
-    console.log('Waiting for peers to discover each other...');
+    // Using test.info().annotations instead of console.log for logging
+    test.info().annotations.push({ type: 'info', description: 'Waiting for peers to discover each other...' });
     await waitForPeerCount(extensionPage, 1, 30000);
     
     // Take screenshots after peer discovery
@@ -59,7 +60,7 @@ mergeTest.describe('History Merging Demonstration', () => {
     await secondExtensionPage.screenshot({ path: path.join(screenshotsDir, '04-browser2-peer-connected.png') });
     
     // Add a history item in the first browser
-    console.log('Adding history item in first browser...');
+    test.info().annotations.push({ type: 'info', description: 'Adding history item in first browser...' });
     const testUrl1 = 'https://example.com/test-browser1-' + Date.now();
     const testTitle1 = 'Test Page from Browser 1';
     await addHistoryItem(extensionPage, testUrl1, testTitle1);
@@ -68,14 +69,14 @@ mergeTest.describe('History Merging Demonstration', () => {
     await extensionPage.screenshot({ path: path.join(screenshotsDir, '05-browser1-item-added.png') });
     
     // Wait for synchronization (give it some time)
-    console.log('Waiting for synchronization...');
+    test.info().annotations.push({ type: 'info', description: 'Waiting for synchronization...' });
     await extensionPage.waitForTimeout(5000);
     
     // Take screenshot of second browser after sync should have happened
     await secondExtensionPage.screenshot({ path: path.join(screenshotsDir, '06-browser2-after-sync1.png') });
     
     // Add a history item in the second browser
-    console.log('Adding history item in second browser...');
+    test.info().annotations.push({ type: 'info', description: 'Adding history item in second browser...' });
     const testUrl2 = 'https://example.com/test-browser2-' + Date.now();
     const testTitle2 = 'Test Page from Browser 2';
     await addHistoryItem(secondExtensionPage, testUrl2, testTitle2);
@@ -84,7 +85,7 @@ mergeTest.describe('History Merging Demonstration', () => {
     await secondExtensionPage.screenshot({ path: path.join(screenshotsDir, '07-browser2-item-added.png') });
     
     // Wait for synchronization again
-    console.log('Waiting for second synchronization...');
+    test.info().annotations.push({ type: 'info', description: 'Waiting for second synchronization...' });
     await extensionPage.waitForTimeout(5000);
     
     // Take screenshots after second sync
@@ -165,8 +166,8 @@ mergeTest.describe('History Merging Demonstration', () => {
       
       <div class="success">
         ${(browser1Item1 && browser1Item2 && browser2Item1 && browser2Item2) 
-          ? 'SUCCESS: History items were successfully synchronized between both browsers!' 
-          : 'FAILURE: Some history items were not synchronized correctly.'}
+    ? 'SUCCESS: History items were successfully synchronized between both browsers!' 
+    : 'FAILURE: Some history items were not synchronized correctly.'}
       </div>
     </body>
     </html>
@@ -186,6 +187,6 @@ mergeTest.describe('History Merging Demonstration', () => {
     expect(browser1Item2.value.title).toBe(testTitle2);
     expect(browser2Item2.value.title).toBe(testTitle2);
     
-    console.log('History merge demonstration completed successfully!');
+    test.info().annotations.push({ type: 'info', description: 'History merge demonstration completed successfully!' });
   });
 });
