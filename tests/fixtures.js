@@ -29,7 +29,7 @@ const browserSettings = {
  */
 export const test = base.extend({
   // Define a fixture for a context with the extension loaded
-  context: async ({ _browser }, use) => {
+  context: async ({}, use) => {
     // Launch a browser with the extension loaded
     const context = await chromium.launchPersistentContext('', browserSettings);
     
@@ -67,7 +67,7 @@ export const test = base.extend({
   },
   
   // Define a fixture for a second browser instance to test P2P functionality
-  secondContext: async ({ _browser }, use) => {
+  secondContext: async ({}, use) => {
     // Launch a second browser with the extension loaded
     // Use a different user data directory to ensure separate instances
     const context = await chromium.launchPersistentContext('user-data-dir-2', browserSettings);
