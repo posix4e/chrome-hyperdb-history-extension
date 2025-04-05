@@ -10,7 +10,7 @@ const __dirname = path.dirname(__filename);
  */
 export const test = base.extend({
   // Define a fixture for a context with the extension loaded
-  context: async ({ browser }, use) => {
+  context: async ({ _browser }, use) => {
     // Get the absolute path to the extension
     const extensionPath = path.resolve(__dirname, '..');
     
@@ -58,7 +58,7 @@ export const test = base.extend({
   },
   
   // Define a fixture for a second browser instance to test P2P functionality
-  secondContext: async ({ browser }, use) => {
+  secondContext: async ({ _browser }, use) => {
     // Get the absolute path to the extension
     const extensionPath = path.resolve(__dirname, '..');
     
