@@ -1,9 +1,28 @@
 import { test as base, chromium } from '@playwright/test';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { devices } from '@playwright/test';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// Get the project root directory
+const projectRoot = path.resolve(__dirname, '..');
+
+// Import browser settings from the main config
+// We're extracting the key browser settings that should be consistent
+const browserSettings = {
+  // Use non-headless mode for extension testing (xvfb handles this in CI)
+  headless: false,
+  // Standard args needed for extension testing
+  args: [
+    `--disable-extensions-except=${projectRoot}`,
+    `--load-extension=${projectRoot}`,
+    '--no-sandbox',
+  ],
+  // Use the same device settings as in the config
+  ...devices['Desktop Chrome']
+};
 
 /**
  * Extension test fixture that loads the Chrome extension
@@ -11,18 +30,8 @@ const __dirname = path.dirname(__filename);
 export const test = base.extend({
   // Define a fixture for a context with the extension loaded
   context: async ({ _browser }, use) => {
-    // Get the absolute path to the extension
-    const extensionPath = path.resolve(__dirname, '..');
-    
     // Launch a browser with the extension loaded
-    const context = await chromium.launchPersistentContext('', {
-      headless: false, // Don't use headless mode as we're using xvfb in CI
-      args: [
-        `--disable-extensions-except=${extensionPath}`,
-        `--load-extension=${extensionPath}`,
-        '--no-sandbox',
-      ],
-    });
+    const context = await chromium.launchPersistentContext('', browserSettings);
     
     // Use the context in the test
     await use(context);
@@ -59,18 +68,9 @@ export const test = base.extend({
   
   // Define a fixture for a second browser instance to test P2P functionality
   secondContext: async ({ _browser }, use) => {
-    // Get the absolute path to the extension
-    const extensionPath = path.resolve(__dirname, '..');
-    
     // Launch a second browser with the extension loaded
-    const context = await chromium.launchPersistentContext('user-data-dir-2', {
-      headless: false, // Don't use headless mode as we're using xvfb in CI
-      args: [
-        `--disable-extensions-except=${extensionPath}`,
-        `--load-extension=${extensionPath}`,
-        '--no-sandbox',
-      ],
-    });
+    // Use a different user data directory to ensure separate instances
+    const context = await chromium.launchPersistentContext('user-data-dir-2', browserSettings);
     
     // Use the context in the test
     await use(context);
