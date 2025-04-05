@@ -10,11 +10,46 @@ let swarm = null;
 let peerId = null;
 let isConnected = false;
 let peers = new Set();
+let deviceInfo = null;
+
+// Get device information
+function getDeviceInfo() {
+  const platform = navigator.platform;
+  const userAgent = navigator.userAgent;
+  let deviceName = 'Unknown Device';
+  
+  // Try to determine device type
+  if (/Windows/.test(platform)) {
+    deviceName = 'Windows PC';
+  } else if (/Macintosh|MacIntel|MacPPC|Mac68K/.test(platform)) {
+    deviceName = 'Mac';
+  } else if (/Linux/.test(platform)) {
+    deviceName = 'Linux';
+  } else if (/Android/.test(userAgent)) {
+    deviceName = 'Android Device';
+  } else if (/iPhone|iPad|iPod/.test(userAgent)) {
+    deviceName = 'iOS Device';
+  }
+  
+  // Add a unique identifier for this device instance
+  const deviceId = localStorage.getItem('deviceId');
+  if (!deviceId) {
+    const newDeviceId = Math.random().toString(36).substring(2, 15);
+    localStorage.setItem('deviceId', newDeviceId);
+    return `${deviceName} (${newDeviceId})`;
+  }
+  
+  return `${deviceName} (${deviceId})`;
+}
 
 // Initialize the database and swarm
 async function initialize() {
   try {
     console.log('Initializing HyperDB History Sync...');
+    
+    // Set device info
+    deviceInfo = getDeviceInfo();
+    console.log('Device info:', deviceInfo);
     
     // Create or load the hypercore
     const core = new Hypercore(RAM);
@@ -91,14 +126,15 @@ async function storeHistoryItem(historyItem) {
     // Create a key based on URL and timestamp
     const key = `history:${historyItem.id}`;
     
-    // Store the history item
+    // Store the history item with device info
     await db.put(key, {
       url: historyItem.url,
       title: historyItem.title,
       lastVisitTime: historyItem.lastVisitTime,
       visitCount: historyItem.visitCount,
       typedCount: historyItem.typedCount,
-      timestamp: Date.now()
+      timestamp: Date.now(),
+      deviceInfo: deviceInfo
     });
     
     console.log('Stored history item:', historyItem.url);
@@ -151,14 +187,39 @@ async function clearStoredData() {
   }
 }
 
+// Get all history items from the database
+async function getAllHistoryItems() {
+  if (!db || !isConnected) return [];
+  
+  try {
+    const items = [];
+    for await (const { key, value } of db.createReadStream({ gt: 'history:', lt: 'history;\xff' })) {
+      items.push(value);
+    }
+    return items;
+  } catch (error) {
+    console.error('Error getting history items:', error);
+    return [];
+  }
+}
+
 // Handle messages from the popup
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'getStatus') {
     sendResponse({
       connected: isConnected,
       peerId: peerId,
-      peerCount: peers.size
+      peerCount: peers.size,
+      deviceInfo: deviceInfo
     });
+  } else if (message.action === 'getHistory') {
+    getAllHistoryItems()
+      .then(items => sendResponse({ items }))
+      .catch(error => {
+        console.error('Error getting history:', error);
+        sendResponse({ items: [] });
+      });
+    return true; // Keep the message channel open for the async response
   } else if (message.action === 'syncNow') {
     syncRecentHistory()
       .then(() => sendResponse({ success: true }))

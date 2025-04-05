@@ -33,7 +33,7 @@
     button:hover {
       background-color: #0069d9;
     }
-    .peer-id {
+    .peer-id, .device-info {
       word-break: break-all;
       font-size: 12px;
       margin-top: 10px;
@@ -41,14 +41,42 @@
       background-color: #f8f9fa;
       border-radius: 3px;
     }
+    .history-list {
+      margin-top: 15px;
+      max-height: 300px;
+      overflow-y: auto;
+      border: 1px solid #ddd;
+      border-radius: 3px;
+      padding: 5px;
+    }
+    .history-item {
+      padding: 5px;
+      border-bottom: 1px solid #eee;
+    }
+    .history-item:last-child {
+      border-bottom: none;
+    }
+    .history-item-title {
+      font-weight: bold;
+    }
+    .history-item-url {
+      font-size: 12px;
+      color: #007bff;
+    }
+    .history-item-meta {
+      font-size: 10px;
+      color: #6c757d;
+    }
   </style>
 </head>
 <body>
   <h2>HyperDB History Sync</h2>
   <div id="status" class="status disconnected">Disconnected</div>
   <div id="peerId" class="peer-id"></div>
+  <div id="deviceInfo" class="device-info"></div>
   <button id="syncNow">Sync Now</button>
   <button id="clearData">Clear Local Data</button>
+  <div id="historyList" class="history-list">No history items found</div>
   <script src="js/popup.js"></script>
 </body>
 </html>

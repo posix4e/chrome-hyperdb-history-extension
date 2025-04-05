@@ -26,6 +26,9 @@ jobs:
       - name: Install staging peer dependencies
         run: cd staging-peer && npm ci
       
+      - name: Run ESLint
+        run: npm run lint
+      
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
       
