@@ -16,8 +16,8 @@ if (!fs.existsSync(screenshotsDir)) {
   fs.mkdirSync(screenshotsDir, { recursive: true });
 }
 
-// Only run this test in local development, not in CI
-test.skip(!!process.env.CI, 'History merge demonstration is skipped in CI environment because it requires extension functionality');
+// This test will run in both CI and local environments
+// xvfb in CI will provide the necessary display for extension testing
 
 // Use the extension test fixtures
 const mergeTest = extensionTest.extend({});

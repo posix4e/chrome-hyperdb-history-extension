@@ -29,8 +29,8 @@ export default defineConfig({
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
-      // In CI, only run the simple test that doesn't require extension functionality
-      testMatch: process.env.CI ? ['**/ci-test.spec.js'] : undefined,
+      // Run all tests in both CI and local environments
+      // The tests that can't run in CI will skip themselves
     },
   ],
   webServer: {

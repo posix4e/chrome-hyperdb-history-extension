@@ -114,7 +114,7 @@ The demonstration shows:
 - Automatic synchronization of history items between browsers
 - Visual confirmation of the merged history
 
-Note: This test is automatically skipped in CI environments because it requires extension functionality that's difficult to test in CI, but it can be run locally for demonstration purposes.
+Note: This test runs in both CI and local environments. In CI, xvfb provides the necessary display server for extension testing.
 
 ### Linting
 
