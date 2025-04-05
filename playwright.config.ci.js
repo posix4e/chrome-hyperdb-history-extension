@@ -28,7 +28,7 @@ export default defineConfig({
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
-      testMatch: ['**/extension.spec.js'],
+      testMatch: ['**/ci-test.spec.js'],
     },
   ],
   webServer: {
