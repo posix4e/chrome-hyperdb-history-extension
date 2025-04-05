@@ -1,0 +1,177 @@
+import { expect, test } from '@playwright/test';
+import fs from 'fs';
+import path from 'path';
+import { test as extensionTest } from './fixtures.js';
+import { 
+  waitForExtensionToConnect, 
+  addHistoryItem, 
+  getAllHistoryItems, 
+  clearAllData,
+  waitForPeerCount
+} from './utils.js';
+
+// Ensure screenshots directory exists
+const screenshotsDir = path.join(process.cwd(), 'test-results/history-merge-screenshots');
+if (!fs.existsSync(screenshotsDir)) {
+  fs.mkdirSync(screenshotsDir, { recursive: true });
+}
+
+// Skip this test in CI environments for now
+test.skip(!!process.env.CI, 'Skipping history merge test in CI environment until extension testing is stable');
+
+// Use the extension test fixtures
+const mergeTest = extensionTest.extend({});
+
+mergeTest.describe('History Merging Demonstration', () => {
+  mergeTest.beforeEach(async ({ extensionPage, secondExtensionPage }) => {
+    try {
+      // Add diagnostic info
+      test.info().annotations.push({ type: 'info', description: 'Starting beforeEach hook for history merge test' });
+      
+      // Open both extension popups
+      await extensionPage.openPopup();
+      test.info().annotations.push({ type: 'info', description: 'First extension popup opened' });
+      
+      await secondExtensionPage.openPopup();
+      test.info().annotations.push({ type: 'info', description: 'Second extension popup opened' });
+      
+      // Take screenshots of initial state
+      await extensionPage.screenshot({ path: path.join(screenshotsDir, '01-browser1-initial.png') });
+      await secondExtensionPage.screenshot({ path: path.join(screenshotsDir, '01-browser2-initial.png') });
+      test.info().annotations.push({ type: 'info', description: 'Initial screenshots captured' });
+      
+      // Wait for both extensions to connect
+      test.info().annotations.push({ type: 'info', description: 'Waiting for first extension to connect' });
+      await waitForExtensionToConnect(extensionPage, 15000);
+      
+      test.info().annotations.push({ type: 'info', description: 'Waiting for second extension to connect' });
+      await waitForExtensionToConnect(secondExtensionPage, 15000);
+      
+      // Take screenshots after connection
+      await extensionPage.screenshot({ path: path.join(screenshotsDir, '02-browser1-connected.png') });
+      await secondExtensionPage.screenshot({ path: path.join(screenshotsDir, '02-browser2-connected.png') });
+      
+      // Clear data in both instances
+      test.info().annotations.push({ type: 'info', description: 'Clearing data in first extension' });
+      await clearAllData(extensionPage);
+      
+      test.info().annotations.push({ type: 'info', description: 'Clearing data in second extension' });
+      await clearAllData(secondExtensionPage);
+      
+      // Take screenshots after clearing data
+      await extensionPage.screenshot({ path: path.join(screenshotsDir, '03-browser1-cleared.png') });
+      await secondExtensionPage.screenshot({ path: path.join(screenshotsDir, '03-browser2-cleared.png') });
+      
+      test.info().annotations.push({ type: 'info', description: 'beforeEach hook completed successfully' });
+    } catch (error) {
+      // Log the error for debugging
+      test.info().annotations.push({ type: 'error', description: `Error in beforeEach hook: ${error.message}` });
+      test.info().annotations.push({ type: 'error', description: error.stack });
+      throw error; // Re-throw to fail the test
+    }
+  });
+  
+  mergeTest('should demonstrate history merging between two browsers', async ({ extensionPage, secondExtensionPage }) => {
+    try {
+      // Wait for the peers to discover each other
+      // Using test.info().annotations instead of console.log for logging
+      test.info().annotations.push({ type: 'info', description: 'Starting history merge test' });
+      test.info().annotations.push({ type: 'info', description: 'Waiting for peers to discover each other...' });
+      await waitForPeerCount(extensionPage, 1, 30000);
+      
+      // Take screenshots after peer discovery
+      await extensionPage.screenshot({ path: path.join(screenshotsDir, '04-browser1-peer-connected.png') });
+      await secondExtensionPage.screenshot({ path: path.join(screenshotsDir, '04-browser2-peer-connected.png') });
+      
+      // Add a history item in the first browser
+      test.info().annotations.push({ type: 'info', description: 'Adding history item in first browser...' });
+      const testUrl1 = 'https://example.com/test-browser1-' + Date.now();
+      const testTitle1 = 'Test Page from Browser 1';
+      await addHistoryItem(extensionPage, testUrl1, testTitle1);
+      
+      // Take screenshot after adding item in first browser
+      await extensionPage.screenshot({ path: path.join(screenshotsDir, '05-browser1-item-added.png') });
+      
+      // Wait for synchronization (give it some time)
+      test.info().annotations.push({ type: 'info', description: 'Waiting for synchronization...' });
+      await extensionPage.waitForTimeout(5000);
+      
+      // Take screenshot of second browser after sync should have happened
+      await secondExtensionPage.screenshot({ path: path.join(screenshotsDir, '06-browser2-after-sync1.png') });
+      
+      // Add a history item in the second browser
+      test.info().annotations.push({ type: 'info', description: 'Adding history item in second browser...' });
+      const testUrl2 = 'https://example.com/test-browser2-' + Date.now();
+      const testTitle2 = 'Test Page from Browser 2';
+      await addHistoryItem(secondExtensionPage, testUrl2, testTitle2);
+      
+      // Take screenshot after adding item in second browser
+      await secondExtensionPage.screenshot({ path: path.join(screenshotsDir, '07-browser2-item-added.png') });
+      
+      // Wait for synchronization again
+      test.info().annotations.push({ type: 'info', description: 'Waiting for second synchronization...' });
+      await extensionPage.waitForTimeout(5000);
+      
+      // Take screenshots after second sync
+      await extensionPage.screenshot({ path: path.join(screenshotsDir, '08-browser1-after-sync2.png') });
+      await secondExtensionPage.screenshot({ path: path.join(screenshotsDir, '08-browser2-after-sync2.png') });
+      
+      // Get history items from both instances
+      const items1 = await getAllHistoryItems(extensionPage);
+      const items2 = await getAllHistoryItems(secondExtensionPage);
+      
+      // Save the history items as JSON for inspection
+      fs.writeFileSync(
+        path.join(screenshotsDir, 'browser1-history-items.json'), 
+        JSON.stringify(items1, null, 2)
+      );
+      fs.writeFileSync(
+        path.join(screenshotsDir, 'browser2-history-items.json'), 
+        JSON.stringify(items2, null, 2)
+      );
+      
+      // Find our test items in both instances
+      const browser1Item1 = items1.find(item => item.value.url === testUrl1);
+      const browser1Item2 = items1.find(item => item.value.url === testUrl2);
+      const browser2Item1 = items2.find(item => item.value.url === testUrl1);
+      const browser2Item2 = items2.find(item => item.value.url === testUrl2);
+      
+      // Create a simple HTML report
+      const reportHtml = '<!DOCTYPE html><html><head><title>History Merge Report</title></head><body>' +
+        '<h1>History Merge Demonstration</h1>' +
+        '<h2>Browser 1 Items</h2>' +
+        '<p>Item 1: ' + (browser1Item1?.value?.title || 'Not found') + ' - ' + (browser1Item1?.value?.url || 'N/A') + '</p>' +
+        '<p>Item 2: ' + (browser1Item2?.value?.title || 'Not found') + ' - ' + (browser1Item2?.value?.url || 'N/A') + '</p>' +
+        '<h2>Browser 2 Items</h2>' +
+        '<p>Item 1: ' + (browser2Item1?.value?.title || 'Not found') + ' - ' + (browser2Item1?.value?.url || 'N/A') + '</p>' +
+        '<p>Item 2: ' + (browser2Item2?.value?.title || 'Not found') + ' - ' + (browser2Item2?.value?.url || 'N/A') + '</p>' +
+        '<p><strong>' + 
+        ((browser1Item1 && browser1Item2 && browser2Item1 && browser2Item2) 
+          ? 'SUCCESS: History items were successfully synchronized between both browsers!' 
+          : 'FAILURE: Some history items were not synchronized correctly.') +
+        '</strong></p>' +
+        '</body></html>';
+      
+      fs.writeFileSync(path.join(screenshotsDir, 'history-merge-report.html'), reportHtml);
+      
+      // Verify that both items exist in both instances
+      expect(browser1Item1).toBeTruthy();
+      expect(browser1Item2).toBeTruthy();
+      expect(browser2Item1).toBeTruthy();
+      expect(browser2Item2).toBeTruthy();
+      
+      // Verify that the items have the same data in both instances
+      expect(browser1Item1.value.title).toBe(testTitle1);
+      expect(browser2Item1.value.title).toBe(testTitle1);
+      expect(browser1Item2.value.title).toBe(testTitle2);
+      expect(browser2Item2.value.title).toBe(testTitle2);
+      
+      test.info().annotations.push({ type: 'info', description: 'History merge demonstration completed successfully!' });
+    } catch (error) {
+      // Log the error for debugging
+      test.info().annotations.push({ type: 'error', description: `Error in test: ${error.message}` });
+      test.info().annotations.push({ type: 'error', description: error.stack });
+      throw error; // Re-throw to fail the test
+    }
+  });
+});
