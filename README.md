@@ -52,6 +52,48 @@ To modify or extend this extension:
 2. Reload the extension in Chrome's extension management page
 3. Test your changes
 
+### Testing
+
+This extension includes automated integration tests using Playwright. The tests verify the UI components, interactions, and simulate Chrome API behavior.
+
+#### Running Tests
+
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+2. Install Playwright browsers:
+   ```bash
+   npx playwright install --with-deps chromium
+   ```
+
+3. Run the tests:
+   ```bash
+   npm test
+   ```
+
+4. Run tests with debugging:
+   ```bash
+   npm run test:debug
+   ```
+
+5. View the HTML test report:
+   ```bash
+   npx playwright show-report
+   ```
+
+#### Test Features
+
+- **Screenshot Testing**: Tests automatically capture screenshots at various stages, which are saved in the `test-results/` directory
+- **UI Testing**: Verifies that all UI elements are present and correctly styled
+- **Interaction Testing**: Tests button clicks and hover states
+- **Mock Chrome API**: Simulates Chrome extension API behavior for testing outside the extension environment
+
+#### Continuous Integration
+
+The repository includes GitHub Actions workflows that automatically run the tests on push and pull requests to the main branch. The test results and screenshots are available as artifacts in the GitHub Actions workflow.
+
 ## License
 
 MIT
