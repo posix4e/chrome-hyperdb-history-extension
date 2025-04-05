@@ -23,9 +23,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
       
-      - name: Install staging peer dependencies
-        run: cd staging-peer && npm ci
-      
       - name: Run ESLint
         run: npm run lint
       

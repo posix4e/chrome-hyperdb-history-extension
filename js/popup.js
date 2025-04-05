@@ -87,8 +87,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
   
-  // Function to display history items
-  function displayHistoryItems(items) {
+  // Function to display history items - exposed globally for testing
+  window.displayHistoryItems = function(items) {
     if (!items || items.length === 0) {
       historyListElement.innerHTML = 'No history items found';
       return;

@@ -220,6 +220,17 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         sendResponse({ items: [] });
       });
     return true; // Keep the message channel open for the async response
+  } else if (message.action === 'storeHistoryItem') {
+    // This is used by the tests to directly add history items
+    if (message.historyItem) {
+      storeHistoryItem(message.historyItem)
+        .then(() => sendResponse({ success: true }))
+        .catch(error => {
+          console.error('Error storing history item:', error);
+          sendResponse({ success: false, error: error.message });
+        });
+      return true; // Keep the message channel open for the async response
+    }
   } else if (message.action === 'syncNow') {
     syncRecentHistory()
       .then(() => sendResponse({ success: true }))
