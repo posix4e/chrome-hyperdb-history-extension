@@ -60,7 +60,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: test-screenshots
-          path: test-results/screenshots/
+          path: test-results/
+          if-no-files-found: ignore
           retention-days: 30
           
   package:
