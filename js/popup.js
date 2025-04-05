@@ -1,23 +1,41 @@
 document.addEventListener('DOMContentLoaded', function() {
   const statusElement = document.getElementById('status');
   const peerIdElement = document.getElementById('peerId');
+  const deviceInfoElement = document.getElementById('deviceInfo');
+  const peerCountElement = document.getElementById('peerCount');
   const syncNowButton = document.getElementById('syncNow');
   const clearDataButton = document.getElementById('clearData');
 
-  // Check connection status
-  chrome.runtime.sendMessage({ action: 'getStatus' }, function(response) {
-    if (response && response.connected) {
-      statusElement.textContent = 'Connected';
-      statusElement.className = 'status connected';
-      
-      if (response.peerId) {
-        peerIdElement.textContent = `Your Peer ID: ${response.peerId}`;
+  // Function to update the UI with status information
+  function updateStatusUI() {
+    chrome.runtime.sendMessage({ action: 'getStatus' }, function(response) {
+      if (response && response.connected) {
+        statusElement.textContent = 'Connected';
+        statusElement.className = 'status connected';
+        
+        if (response.peerId) {
+          peerIdElement.textContent = `Your Peer ID: ${response.peerId}`;
+        }
+        
+        if (response.deviceInfo) {
+          deviceInfoElement.textContent = `Device: ${response.deviceInfo.deviceName} (${response.deviceInfo.deviceId})`;
+        }
+        
+        peerCountElement.textContent = `Connected Peers: ${response.peerCount}`;
+      } else {
+        statusElement.textContent = 'Disconnected';
+        statusElement.className = 'status disconnected';
+        deviceInfoElement.textContent = 'Device: Unknown';
+        peerCountElement.textContent = 'Connected Peers: 0';
       }
-    } else {
-      statusElement.textContent = 'Disconnected';
-      statusElement.className = 'status disconnected';
-    }
-  });
+    });
+  }
+
+  // Initial status update
+  updateStatusUI();
+  
+  // Update status every 5 seconds
+  setInterval(updateStatusUI, 5000);
 
   // Sync now button
   syncNowButton.addEventListener('click', function() {

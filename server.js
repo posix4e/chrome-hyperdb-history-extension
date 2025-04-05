@@ -32,10 +32,10 @@ const server = http.createServer((req, res) => {
   }
   
   // Serve the test.html file for the root path
-  let filePath = req.url === '/' ? './test.html' : '.' + req.url;
+  const filePath = req.url === '/' ? './test.html' : '.' + req.url;
   
   const extname = path.extname(filePath);
-  let contentType = MIME_TYPES[extname] || 'text/plain';
+  const contentType = MIME_TYPES[extname] || 'text/plain';
   
   fs.readFile(filePath, (error, content) => {
     if (error) {

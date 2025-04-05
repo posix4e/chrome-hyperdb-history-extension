@@ -9,7 +9,7 @@ let db = null;
 let swarm = null;
 let peerId = null;
 let isConnected = false;
-let peers = new Set();
+const peers = new Set();
 
 // Initialize the database and swarm
 async function initialize() {
@@ -31,7 +31,7 @@ async function initialize() {
     
     // Join the swarm with the topic derived from the core's public key
     const topic = core.discoveryKey;
-    const discovery = swarm.join(topic, { server: true, client: true });
+    swarm.join(topic, { server: true, client: true });
     
     // Store the peer ID (public key)
     peerId = core.key.toString('hex');
@@ -85,20 +85,27 @@ function startHistoryTracking() {
 
 // Store a history item in the HyperDB
 async function storeHistoryItem(historyItem) {
-  if (!db || !isConnected) return;
+  if (!db || !isConnected) {
+    return;
+  }
   
   try {
     // Create a key based on URL and timestamp
     const key = `history:${historyItem.id}`;
     
-    // Store the history item
+    // Get device information
+    const deviceInfo = getDeviceInfo();
+    
+    // Store the history item with device information
     await db.put(key, {
       url: historyItem.url,
       title: historyItem.title,
       lastVisitTime: historyItem.lastVisitTime,
       visitCount: historyItem.visitCount,
       typedCount: historyItem.typedCount,
-      timestamp: Date.now()
+      timestamp: Date.now(),
+      deviceId: deviceInfo.deviceId,
+      deviceName: deviceInfo.deviceName
     });
     
     console.log('Stored history item:', historyItem.url);
@@ -109,7 +116,9 @@ async function storeHistoryItem(historyItem) {
 
 // Sync recent history (last 24 hours)
 async function syncRecentHistory() {
-  if (!db || !isConnected) return;
+  if (!db || !isConnected) {
+    return;
+  }
   
   try {
     // Get history from the last 24 hours
@@ -135,7 +144,9 @@ async function syncRecentHistory() {
 
 // Clear all stored data
 async function clearStoredData() {
-  if (!db || !isConnected) return false;
+  if (!db || !isConnected) {
+    return false;
+  }
   
   try {
     // Iterate through all keys and delete them
@@ -151,13 +162,42 @@ async function clearStoredData() {
   }
 }
 
+// Get all history items from the database
+async function getAllHistoryItems() {
+  if (!db || !isConnected) {
+    return [];
+  }
+  
+  try {
+    const items = [];
+    for await (const { key, value } of db.createReadStream({ gt: 'history:', lt: 'history:\xff' })) {
+      items.push({ key, value });
+    }
+    return items;
+  } catch (error) {
+    console.error('Error getting all history items:', error);
+    return [];
+  }
+}
+
+// Get device information
+function getDeviceInfo() {
+  return {
+    deviceId: peerId ? peerId.substring(0, 8) : 'unknown',
+    userAgent: navigator.userAgent,
+    platform: navigator.platform,
+    deviceName: `Chrome on ${navigator.platform}`
+  };
+}
+
 // Handle messages from the popup
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'getStatus') {
     sendResponse({
       connected: isConnected,
       peerId: peerId,
-      peerCount: peers.size
+      peerCount: peers.size,
+      deviceInfo: getDeviceInfo()
     });
   } else if (message.action === 'syncNow') {
     syncRecentHistory()
@@ -172,6 +212,22 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       .then(success => sendResponse({ success }))
       .catch(error => {
         console.error('Clear data error:', error);
+        sendResponse({ success: false, error: error.message });
+      });
+    return true; // Keep the message channel open for the async response
+  } else if (message.action === 'getAllHistoryItems') {
+    getAllHistoryItems()
+      .then(items => sendResponse({ success: true, items }))
+      .catch(error => {
+        console.error('Error getting history items:', error);
+        sendResponse({ success: false, error: error.message });
+      });
+    return true; // Keep the message channel open for the async response
+  } else if (message.action === 'storeHistoryItem') {
+    storeHistoryItem(message.historyItem)
+      .then(() => sendResponse({ success: true }))
+      .catch(error => {
+        console.error('Error storing history item:', error);
         sendResponse({ success: false, error: error.message });
       });
     return true; // Keep the message channel open for the async response

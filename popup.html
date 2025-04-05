@@ -41,12 +41,27 @@
       background-color: #f8f9fa;
       border-radius: 3px;
     }
+    .device-info {
+      margin-top: 10px;
+      padding: 5px;
+      background-color: #e2f0fb;
+      border-radius: 3px;
+      font-size: 12px;
+    }
+    .peer-count {
+      margin-top: 10px;
+      padding: 5px;
+      background-color: #fff3cd;
+      border-radius: 3px;
+    }
   </style>
 </head>
 <body>
   <h2>HyperDB History Sync</h2>
   <div id="status" class="status disconnected">Disconnected</div>
+  <div id="deviceInfo" class="device-info">Device: Unknown</div>
   <div id="peerId" class="peer-id"></div>
+  <div id="peerCount" class="peer-count">Connected Peers: 0</div>
   <button id="syncNow">Sync Now</button>
   <button id="clearData">Clear Local Data</button>
   <script src="js/popup.js"></script>
