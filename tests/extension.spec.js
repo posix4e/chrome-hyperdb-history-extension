@@ -24,6 +24,12 @@ test.describe('Real-World Syncing Tests', () => {
   test.beforeAll(async () => {
     console.log('Starting staging peer server...');
     
+    // Create screenshots directory if it doesn't exist
+    if (!fs.existsSync('screenshots')) {
+      fs.mkdirSync('screenshots', { recursive: true });
+      console.log('Created screenshots directory');
+    }
+    
     // Install dependencies for the staging peer
     await new Promise((resolve, reject) => {
       const npmInstall = spawn('npm', ['install'], {

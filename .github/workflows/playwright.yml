@@ -29,6 +29,18 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
       
+      - name: Build Chrome extension
+        run: |
+          mkdir -p dist
+          zip -r dist/chrome-hyperdb-history-extension.zip . -x "node_modules/*" -x "staging-peer/*" -x "tests/*" -x "test-results/*" -x "playwright-report/*" -x "screenshots/*" -x "dist/*" -x ".git/*" -x ".github/*"
+      
+      - name: Upload Chrome extension
+        uses: actions/upload-artifact@v4
+        with:
+          name: chrome-extension
+          path: dist/chrome-hyperdb-history-extension.zip
+          retention-days: 30
+      
       - name: Run extension tests
         run: npx playwright test
       
@@ -46,4 +58,12 @@ jobs:
         with:
           name: test-results
           path: test-results/
+          retention-days: 30
+          
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: screenshots/
           retention-days: 30
