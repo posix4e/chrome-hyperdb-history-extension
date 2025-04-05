@@ -17,7 +17,7 @@ if (!fs.existsSync(screenshotsDir)) {
 }
 
 // Only run this test in local development, not in CI
-test.skip(!!process.env.CI, 'Skipping in CI environment');
+test.skip(!!process.env.CI, 'History merge demonstration is skipped in CI environment because it requires extension functionality');
 
 // Use the extension test fixtures
 const mergeTest = extensionTest.extend({});

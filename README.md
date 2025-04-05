@@ -99,21 +99,22 @@ npx playwright test tests/extension.spec.js
 The project includes a visual demonstration of how history items are synchronized between browsers:
 
 ```bash
-# Run the history merge demonstration
-./scripts/run-history-merge-demo.sh
+# Run the history merge demonstration test directly
+npx playwright test tests/history-merge-demo.spec.js
 ```
 
-This will:
-1. Run the history merge demonstration test
-2. Capture screenshots at each step of the process
-3. Generate an HTML report showing the synchronization process
-4. Create a visual report in the `demo-report` directory
+This test:
+1. Captures screenshots at each step of the synchronization process
+2. Generates an HTML report showing the merged history
+3. Creates visual evidence of P2P synchronization working
 
 The demonstration shows:
 - Two browser instances connecting to the P2P network
 - Adding history items in each browser
 - Automatic synchronization of history items between browsers
 - Visual confirmation of the merged history
+
+Note: This test is automatically skipped in CI environments because it requires extension functionality that's difficult to test in CI, but it can be run locally for demonstration purposes.
 
 ### Linting
 
