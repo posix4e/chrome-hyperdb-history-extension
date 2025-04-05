@@ -91,6 +91,29 @@ npx playwright test tests/extension.spec.js
 - `tests/extension.spec.js`: Basic functionality tests
 - `tests/p2p-sync.spec.js`: P2P synchronization tests
 - `tests/device-identification.spec.js`: Device identification tests
+- `tests/history-merge-demo.spec.js`: Visual demonstration of history merging between browsers
+- `tests/ci-test.spec.js`: Simplified test for CI environments
+
+#### History Merge Demonstration
+
+The project includes a visual demonstration of how history items are synchronized between browsers:
+
+```bash
+# Run the history merge demonstration
+./scripts/run-history-merge-demo.sh
+```
+
+This will:
+1. Run the history merge demonstration test
+2. Capture screenshots at each step of the process
+3. Generate an HTML report showing the synchronization process
+4. Create a visual report in the `demo-report` directory
+
+The demonstration shows:
+- Two browser instances connecting to the P2P network
+- Adding history items in each browser
+- Automatic synchronization of history items between browsers
+- Visual confirmation of the merged history
 
 ### Linting
 
