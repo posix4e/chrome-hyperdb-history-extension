@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>HyperDB History Sync Test</title>
+  <style>
+    body {
+      width: 300px;
+      padding: 10px;
+      font-family: Arial, sans-serif;
+    }
+    .status {
+      margin-top: 10px;
+      padding: 5px;
+      border-radius: 3px;
+    }
+    .connected {
+      background-color: #d4edda;
+      color: #155724;
+    }
+    .disconnected {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+    button {
+      margin-top: 10px;
+      padding: 5px 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0069d9;
+    }
+    .peer-id {
+      word-break: break-all;
+      font-size: 12px;
+      margin-top: 10px;
+      padding: 5px;
+      background-color: #f8f9fa;
+      border-radius: 3px;
+    }
+    .history-item {
+      margin-top: 10px;
+      padding: 5px;
+      background-color: #f8f9fa;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body>
+  <h2>HyperDB History Sync Test</h2>
+  <div id="status" class="status connected">Connected</div>
+  <div id="peerId" class="peer-id">test-peer-id</div>
+  <button id="syncNow">Sync Now</button>
+  <button id="clearData">Clear Local Data</button>
+  
+  <h3>History</h3>
+  <div id="historyList">
+    <div class="history-item">
+      <div>Title: Playwright</div>
+      <div>URL: https://playwright.dev</div>
+    </div>
+  </div>
+
+  <script>
+    // Simple mock implementation for tests
+    document.getElementById('syncNow').addEventListener('click', function() {
+      alert('Syncing...');
+      // Simulate adding history items
+      const historyList = document.getElementById('historyList');
+      historyList.innerHTML = `
+        <div class="history-item">
+          <div>Title: Playwright</div>
+          <div>URL: https://playwright.dev</div>
+        </div>
+      `;
+    });
+
+    document.getElementById('clearData').addEventListener('click', function() {
+      alert('Clearing data...');
+      // Simulate clearing history items
+      const historyList = document.getElementById('historyList');
+      historyList.innerHTML = '<div>No history items found</div>';
+    });
+  </script>
+</body>
+</html>

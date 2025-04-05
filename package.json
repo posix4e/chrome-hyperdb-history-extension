@@ -10,14 +10,14 @@
     "start:staging-peer": "cd staging-peer && npm start"
   },
   "dependencies": {
-    "hypercore": "^10.0.0",
     "hyperbee": "^2.0.0",
+    "hypercore": "^10.0.0",
     "hyperswarm": "^4.0.0",
     "random-access-memory": "^6.0.0"
   },
   "devDependencies": {
-    "@playwright/test": "^1.40.0",
-    "axios": "^1.6.2",
+    "@playwright/test": "^1.51.1",
+    "axios": "^1.8.4",
     "cors": "^2.8.5",
     "express": "^4.18.2",
     "playwright": "^1.40.0",
