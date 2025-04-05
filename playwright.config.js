@@ -33,9 +33,12 @@ export default defineConfig({
       // The tests that can't run in CI will skip themselves
     },
   ],
-  webServer: {
-    command: 'node server.js',
-    port: 12000,
-    reuseExistingServer: !process.env.CI,
-  },
+  // Only start the web server in local development, not in CI
+  ...(process.env.CI ? {} : {
+    webServer: {
+      command: 'node server.js',
+      port: 12000,
+      reuseExistingServer: true,
+    }
+  }),
 });

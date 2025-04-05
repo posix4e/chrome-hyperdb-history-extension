@@ -13,8 +13,8 @@ test.describe('Basic CI Tests', () => {
     // Take screenshot of initial state
     await page.screenshot({ path: path.join(screenshotsDir, 'initial-state.png') });
     
-    // Navigate to a simple page
-    await page.goto('http://localhost:12000');
+    // Navigate to a simple page - use about:blank instead of localhost to avoid server dependency
+    await page.goto('about:blank');
     
     // Take screenshot after navigation
     await page.screenshot({ path: path.join(screenshotsDir, 'after-navigation.png') });
