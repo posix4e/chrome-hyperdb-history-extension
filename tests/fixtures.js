@@ -16,7 +16,7 @@ export const test = base.extend({
     
     // Launch a browser with the extension loaded
     const context = await chromium.launchPersistentContext('', {
-      headless: process.env.CI ? true : false, // Use headless mode in CI environment
+      headless: false, // Don't use headless mode as we're using xvfb in CI
       args: [
         `--disable-extensions-except=${extensionPath}`,
         `--load-extension=${extensionPath}`,
@@ -64,7 +64,7 @@ export const test = base.extend({
     
     // Launch a second browser with the extension loaded
     const context = await chromium.launchPersistentContext('user-data-dir-2', {
-      headless: process.env.CI ? true : false, // Use headless mode in CI environment
+      headless: false, // Don't use headless mode as we're using xvfb in CI
       args: [
         `--disable-extensions-except=${extensionPath}`,
         `--load-extension=${extensionPath}`,
