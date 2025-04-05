@@ -114,7 +114,7 @@ The demonstration shows:
 - Automatic synchronization of history items between browsers
 - Visual confirmation of the merged history
 
-Note: This test is currently skipped in CI environments but can be run locally for demonstration purposes. We're working on making it stable in CI environments.
+Note: This test is currently skipped in CI environments but can be run locally for demonstration purposes. We're working on making it stable in CI environments with xvfb.
 
 ### Linting
 
